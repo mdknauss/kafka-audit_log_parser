@@ -1,20 +1,21 @@
 from confluent_kafka import Consumer, KafkaError
 import json
 import sys
+import os
 
-# Configuration for Confluent Cloud Kafka consumer
+# Retrieve configuration from environment variables
 conf = {
-    'bootstrap.servers': 'your_bootstrap_servers:9092',  # Replace with your Confluent Cloud bootstrap servers
+    'bootstrap.servers': os.getenv('CONFLUENT_BOOTSTRAP_SERVERS', 'your_bootstrap_servers:9092'),
     'security.protocol': 'SASL_SSL',
     'sasl.mechanisms': 'PLAIN',
-    'sasl.username': 'your_api_key',  # Replace with your Confluent Cloud API key
-    'sasl.password': 'your_api_secret',  # Replace with your Confluent Cloud API secret
-    'group.id': 'your_consumer_group',  # Replace with a consumer group ID
+    'sasl.username': os.getenv('CONFLUENT_API_KEY', 'your_api_key'),
+    'sasl.password': os.getenv('CONFLUENT_API_SECRET', 'your_api_secret'),
+    'group.id': os.getenv('CONFLUENT_CONSUMER_GROUP', 'your_consumer_group'),
     'auto.offset.reset': 'earliest'  # Start from the beginning of the topic
 }
 
 # Sensitive resource prefix to filter for (e.g., topics with sensitive data)
-sensitive_resource_prefix = 'sensitive-'  # Replace or customize as needed
+sensitive_resource_prefix = os.getenv('SENSITIVE_RESOURCE_PREFIX', 'sensitive-')  # Replace or customize via env var
 
 # Create Consumer instance
 consumer = Consumer(conf)
